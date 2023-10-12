@@ -14,6 +14,7 @@ public class TaskController {
 
     @PostMapping("/")
     public TaskModel createTask(@RequestBody TaskModel taskModel) {
+        System.out.println("Depois do filter. Chegou na controller");
         taskRepository.save(taskModel);
         return taskModel;
     }
