@@ -21,7 +21,7 @@ public class UserController {
     @PostMapping("/createUser")
     public ResponseEntity create(@RequestBody UserModel userModel) {
         var user = this.userRepository.findByUserName(userModel.getUserName());
-        if(user.isEmpty()) {
+        if(user != null) {
             userModel.setPassword(Bcrypt.brycptPassword(userModel.getPassword()));
             var userCreated = this.userRepository.save(userModel);
             return ResponseEntity.status(HttpStatus.CREATED).body(userCreated);
