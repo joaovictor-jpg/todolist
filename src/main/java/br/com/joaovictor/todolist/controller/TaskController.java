@@ -37,4 +37,19 @@ public class TaskController {
         var idUser = request.getAttribute("idUser");
         return ResponseEntity.ok().body(this.taskRepository.findByUserId((UUID) idUser));
     }
+    @PutMapping("/{idTasks}")
+    public ResponseEntity update(@RequestBody TaskModel taskModel, @PathVariable UUID idTasks, HttpServletRequest request) {
+        LocalDateTime ldm = LocalDateTime.now();
+
+        if(ldm.isAfter(taskModel.getStartAt()) || ldm.isAfter(taskModel.getEndAt())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A data de início / data de término deve ser maior do que a data atual");
+        }
+        if(taskModel.getStartAt().isAfter(taskModel.getEndAt())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A data de início deve ser menor que data final");
+        }
+
+        taskModel.setUserId((UUID) request.getAttribute("idUser"));
+        taskModel.setId(idTasks);
+        return ResponseEntity.ok().body(this.taskRepository.save(taskModel));
+    }
 }
