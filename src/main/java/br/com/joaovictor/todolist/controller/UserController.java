@@ -1,5 +1,6 @@
 package br.com.joaovictor.todolist.controller;
 
+import br.com.joaovictor.todolist.Helpers.Bcrypt;
 import br.com.joaovictor.todolist.model.Repository.IUserRepository;
 import br.com.joaovictor.todolist.model.entities.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ public class UserController {
     public ResponseEntity create(@RequestBody UserModel userModel) {
         var user = this.userRepository.findByUserName(userModel.getUserName());
         if(user.isEmpty()) {
+            userModel.setPassword(Bcrypt.brycptPassword(userModel.getPassword()));
             var userCreated = this.userRepository.save(userModel);
             return ResponseEntity.status(HttpStatus.CREATED).body(userCreated);
         }
