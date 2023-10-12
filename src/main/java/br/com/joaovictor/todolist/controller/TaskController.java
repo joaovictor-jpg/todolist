@@ -9,15 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/Tasks")
 public class TaskController {
-
     @Autowired
     ITaskRepository taskRepository;
-
     @PostMapping("/")
     public ResponseEntity createTask(@RequestBody TaskModel taskModel, HttpServletRequest request) {
 
@@ -33,5 +32,9 @@ public class TaskController {
         taskModel.setUserId((UUID) request.getAttribute("idUser"));
         return ResponseEntity.ok().body(this.taskRepository.save(taskModel));
     }
-
+    @GetMapping("/")
+    public ResponseEntity<List<TaskModel>> findAll(HttpServletRequest request) {
+        var idUser = request.getAttribute("idUser");
+        return ResponseEntity.ok().body(this.taskRepository.findByUserId((UUID) idUser));
+    }
 }
