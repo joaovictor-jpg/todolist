@@ -1,5 +1,6 @@
 package br.com.joaovictor.todolist.controller;
 
+import br.com.joaovictor.todolist.Helpers.Utils;
 import br.com.joaovictor.todolist.model.Repository.ITaskRepository;
 import br.com.joaovictor.todolist.model.entities.TaskModel;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,18 +39,22 @@ public class TaskController {
         return ResponseEntity.ok().body(this.taskRepository.findByUserId((UUID) idUser));
     }
     @PutMapping("/{idTasks}")
-    public ResponseEntity update(@RequestBody TaskModel taskModel, @PathVariable UUID idTasks, HttpServletRequest request) {
-        LocalDateTime ldm = LocalDateTime.now();
+    public ResponseEntity update(@RequestBody TaskModel taskModel, @PathVariable UUID idTasks) {
 
-        if(ldm.isAfter(taskModel.getStartAt()) || ldm.isAfter(taskModel.getEndAt())) {
+        var task = this.taskRepository.findById(idTasks).orElse(null);
+
+        if(task == null) return ResponseEntity.badRequest().body("Tarefa não encontrada");
+
+        Utils.copyNonNullProperties(taskModel, task);
+
+        LocalDateTime ldm = LocalDateTime.now();
+        if(ldm.isAfter(task.getStartAt()) || ldm.isAfter(task.getEndAt())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A data de início / data de término deve ser maior do que a data atual");
         }
-        if(taskModel.getStartAt().isAfter(taskModel.getEndAt())) {
+        if(task.getStartAt().isAfter(task.getEndAt())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A data de início deve ser menor que data final");
         }
 
-        taskModel.setUserId((UUID) request.getAttribute("idUser"));
-        taskModel.setId(idTasks);
-        return ResponseEntity.ok().body(this.taskRepository.save(taskModel));
+        return ResponseEntity.ok().body(this.taskRepository.save(task));
     }
 }
