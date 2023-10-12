@@ -37,6 +37,7 @@ public class FilterTaskAuth extends OncePerRequestFilter {
                 var isTrue = Bcrypt.description(password, user);
                 if(isTrue) {
                     // Passando a requsição para frente
+                    request.setAttribute("idUser", user.getId());
                     filterChain.doFilter(request, response);
                 } else {
                     response.sendError(401);
