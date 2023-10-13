@@ -1,5 +1,6 @@
 package br.com.joaovictor.todolist.model.entities;
 
+import br.com.joaovictor.todolist.model.exception.TitleException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,4 +33,11 @@ public class TaskModel {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    public void setTitle(String title) {
+        if(title.length() > 50) {
+            throw new TitleException("O campo title deve conter no máxmo 50 caracteres");
+        }
+        this.title = title;
+    }
 }
