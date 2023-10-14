@@ -36,7 +36,7 @@ public class TaskController {
     @GetMapping("/")
     public ResponseEntity<List<TaskModel>> findAll(HttpServletRequest request) {
         var idUser = request.getAttribute("idUser");
-        return ResponseEntity.ok().body(this.taskRepository.findByUserId((UUID) idUser));
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.taskRepository.findByUserId((UUID) idUser));
     }
     @PutMapping("/{idTasks}")
     public ResponseEntity update(@RequestBody TaskModel taskModel, @PathVariable UUID idTasks, HttpServletRequest request) {
